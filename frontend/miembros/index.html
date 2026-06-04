@@ -1,10 +1,204 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📈</text></svg>">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.4/css/bulma.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="assets/style.css">
+    <title>Gestión de Socios | Malervas FCI</title>
 </head>
 <body>
 
+<nav class="navbar is-fixed-top">
+    <div class="container">
+        <div class="navbar-brand">
+            <a class="navbar-item" href="../dashboard/index.html">
+                <h1 class="title is-4">Malervas FCI</h1>
+            </a>
+        </div>
+        <div class="navbar-menu is-active">
+            <div class="navbar-end">
+                <div class="navbar-item">
+                    <a class="button is-light is-rounded" href="../dashboard/index.html">
+                        <span class="icon"><i class="fas fa-arrow-left"></i></span>
+                        <span class="has-text-weight-semibold">Volver al Dashboard</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<div class="container main-container" style="margin-top: 6rem; padding: 0 1rem; padding-bottom: 3rem;">
+    <div class="columns is-variable is-6">
+
+        <div class="column is-4">
+            <div class="box">
+                <div class="section-header">
+                    <span class="icon is-medium mr-3 header-icon"><i class="fas fa-user-plus fa-lg"></i></span>
+                    <h2 class="title is-4 header-title">Nuevo Socio</h2>
+                </div>
+
+                <form id="form_socio">
+                    <div class="field mb-4">
+                        <label class="label label-custom">Nombre (Apodo)</label>
+                        <div class="control has-icons-left">
+                            <input class="input is-medium" type="text" id="nombre_socio" placeholder="Ej: Agus" required>
+                            <span class="icon is-small is-left input-icon"><i class="fas fa-font"></i></span>
+                        </div>
+                    </div>
+
+                    <div class="field mb-5">
+                        <label class="label label-custom">Usuario (Para el sistema)</label>
+                        <div class="control has-icons-left">
+                            <input class="input is-medium" type="text" id="usuario_socio" placeholder="Ej: agusgancedo" required>
+                            <span class="icon is-small is-left input-icon"><i class="fas fa-at"></i></span>
+                        </div>
+                    </div>
+
+                    <div class="control mt-5">
+                        <button type="submit" id="btn_agregar" class="button is-dark is-medium is-fullwidth">
+                            <span class="icon mr-2"><i class="fas fa-plus"></i></span>
+                            <span>Agregar al Fondo</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="column is-8">
+            <div class="box">
+                <div class="section-header">
+                    <span class="icon is-medium mr-3 header-icon"><i class="fas fa-users fa-lg"></i></span>
+                    <h2 class="title is-4 header-title">Socios Activos</h2>
+                </div>
+
+                <div class="table-container">
+                    <table class="table is-fullwidth is-hoverable">
+                        <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Usuario</th>
+                            <th class="has-text-right">Acción</th>
+                        </tr>
+                        </thead>
+                        <tbody id="tabla_socios">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div id="toast_notificacion" class="toast-custom is-hidden">
+    <span class="icon mr-2" id="toast_icon"></span>
+    <span id="toast_msg" style="font-weight: 500;"></span>
+</div>
+
+<script>
+    const API_URL = "http://localhost:3030/api";
+
+    function mostrarToast(mensaje, esError = false) {
+        const toast = document.getElementById("toast_notificacion");
+        const toastMsg = document.getElementById("toast_msg");
+        const toastIcon = document.getElementById("toast_icon");
+        toastMsg.textContent = mensaje;
+        if (esError) {
+            toast.className = "toast-custom toast-error";
+            toastIcon.innerHTML = '<i class="fas fa-times-circle"></i>';
+        } else {
+            toast.className = "toast-custom toast-success";
+            toastIcon.innerHTML = '<i class="fas fa-check-circle"></i>';
+        }
+        toast.classList.remove("is-hidden");
+        setTimeout(() => toast.classList.add("is-hidden"), 4000);
+    }
+
+    async function cargarSocios() {
+        try {
+            const res = await fetch(`${API_URL}/socios`);
+            const socios = await res.json();
+            const tbody = document.getElementById("tabla_socios");
+            tbody.innerHTML = "";
+
+            socios.forEach(s => {
+                const tr = document.createElement("tr");
+                // Usamos las clases específicas para que Bulma no cambie los colores
+                tr.innerHTML = `
+                        <td class="td-id">#${s.id}</td>
+                        <td class="td-nombre">
+                            <span class="icon is-small mr-2 socio-avatar-icon"><i class="fas fa-user-circle"></i></span>${s.nombre}
+                        </td>
+                        <td class="td-usuario">@${s.usuario}</td>
+                        <td class="td-accion has-text-right">
+                            <button class="button is-danger is-light is-small" onclick="eliminarSocio(${s.id}, '${s.nombre}')" title="Eliminar Socio">
+                                <span class="icon is-small"><i class="fas fa-trash"></i></span>
+                            </button>
+                        </td>
+                    `;
+                tbody.appendChild(tr);
+            });
+        } catch (error) {
+            mostrarToast("Error al cargar la lista de socios", true);
+        }
+    }
+
+    document.getElementById("form_socio").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const btn = document.getElementById("btn_agregar");
+        btn.classList.add("is-loading");
+
+        const nombre = document.getElementById("nombre_socio").value;
+        const usuario = document.getElementById("usuario_socio").value;
+
+        try {
+            const res = await fetch(`${API_URL}/socios`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ nombre, usuario })
+            });
+            const data = await res.json();
+
+            if (data.status) {
+                mostrarToast(data.mensaje, false);
+                document.getElementById("nombre_socio").value = "";
+                document.getElementById("usuario_socio").value = "";
+                cargarSocios();
+            } else {
+                mostrarToast(data.mensaje, true);
+            }
+        } catch (error) {
+            mostrarToast("Error de conexión.", true);
+        } finally {
+            btn.classList.remove("is-loading");
+        }
+    });
+
+    async function eliminarSocio(id, nombre) {
+        if(!confirm(`¿Estás seguro de que querés eliminar a ${nombre} del fondo?`)) return;
+
+        try {
+            const res = await fetch(`${API_URL}/socios/${id}`, { method: "DELETE" });
+            const data = await res.json();
+
+            if (data.status) {
+                mostrarToast(data.mensaje, false);
+                cargarSocios();
+            } else {
+                mostrarToast(data.mensaje, true);
+            }
+        } catch (error) {
+            mostrarToast("Error de conexión.", true);
+        }
+    }
+
+    cargarSocios();
+</script>
 </body>
 </html>

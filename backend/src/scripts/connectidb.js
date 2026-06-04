@@ -109,6 +109,7 @@ async function getHistorialTransacciones() {
         FROM transacciones t
         JOIN socios s ON t.id_socio = s.id
         ORDER BY t.fecha DESC
+        LIMIT 30
     `);
     return response.rows;
 }
@@ -128,11 +129,46 @@ async function limpiarHistorial() {
     }
 }
 
+// Agregar un nuevo socio
+async function agregarSocio(nombre, usuario) {
+    try {
+        await dbClient.query("INSERT INTO socios (nombre, usuario) VALUES ($1, $2)", [nombre, usuario]);
+        return { status: true, mensaje: "Socio agregado exitosamente." };
+    } catch (e) {
+        return { status: false, mensaje: "Error al agregar el socio. ¿Quizás el usuario ya existe?" };
+    }
+}
+
+// Eliminar un socio (con protección financiera)
+async function eliminarSocio(id) {
+    try {
+        // 1. Verificamos que no tenga plata adentro
+        const estado = await getEstadoGlobal();
+        const socio = estado.socios.find(s => s.id == id);
+
+        if (socio && parseFloat(socio.cuotas_poseidas) > 0.0001) {
+            throw new Error("El socio tiene dinero en el fondo. Debe retirar todos sus fondos antes de ser eliminado.");
+        }
+
+        // 2. Intentamos borrarlo
+        await dbClient.query("DELETE FROM socios WHERE id = $1", [id]);
+        return { status: true, mensaje: "Socio eliminado correctamente." };
+    } catch (e) {
+        // Si falla por una "Foreign Key" (código 23503), es porque tiene transacciones viejas
+        if (e.code === '23503') {
+            return { status: false, mensaje: "No se puede eliminar. Este socio tiene movimientos en el historial. Limpiá o consolidá el historial primero." };
+        }
+        return { status: false, mensaje: e.message || "Error al eliminar el socio." };
+    }
+}
+
 module.exports = {
     getSocios,
     getEstadoGlobal,
     registrarTransaccion,
     actualizarValorMercado,
     getHistorialTransacciones,
-    limpiarHistorial
+    limpiarHistorial,
+    agregarSocio,
+    eliminarSocio
 };
