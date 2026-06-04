@@ -1,0 +1,109 @@
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #e8ecea;
+
+    background-image:
+            radial-gradient(circle at 85% 0%, rgba(5, 150, 105, 0.12) 0%, transparent 40%), /* Verde financiero arriba a la derecha */
+            radial-gradient(circle at 10% 10%, rgba(59, 130, 246, 0.06) 0%, transparent 40%), /* Azul corporativo arriba a la izq */
+            radial-gradient(circle at 50% 100%, rgba(139, 92, 246, 0.04) 0%, transparent 50%); /* Violeta muy tenue abajo */
+
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    background-size: cover;
+
+    color: #111827;
+    min-height: 100vh;
+}
+
+/* Navbar */
+.navbar {
+    background-color: #ffffff;
+    border-bottom: 1px solid #e5e7eb;
+}
+/* Estilos y transición suave para el Logo/Título */
+.navbar-brand .title {
+    color: #111827 !important;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    transition: all 0.2s ease-in-out; /* Prepara el elemento para animarse */
+}
+
+/* Efecto Hover para "Malervas FCI" */
+.navbar-brand .navbar-item:hover .title {
+    color: #059669 !important; /* Se pinta del verde financiero de la página */
+    transform: scale(1.03); /* Se agranda un 3% para dar efecto de "cliqueable" */
+}
+
+/* Sacamos el fondo gris que pone Bulma por defecto al pasar el mouse por los items del navbar */
+.navbar-brand .navbar-item:hover {
+    background-color: transparent !important;
+}
+
+/* Cajas de los formularios */
+.box {
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    border: 1px solid #e5e7eb;
+    padding: 2.5rem 2rem;
+    height: 100%;
+}
+
+/* Textos e Inputs */
+.label {
+    color: #374151; /* Gris oscuro para las etiquetas */
+    font-weight: 600;
+    font-size: 0.875rem;
+}
+.input, .select select {
+    background-color: #ffffff;
+    border-color: #d1d5db;
+    border-radius: 8px;
+    color: #111827 !important; /* Fuerza a que el texto del input sea negro */
+    box-shadow: none;
+    font-weight: 500;
+}
+.input:focus, .select select:focus {
+    border-color: #111827;
+    box-shadow: 0 0 0 1px #111827;
+}
+.input::placeholder {
+    color: #9ca3af;
+}
+
+/* Iconos de decoración */
+.icon-container {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    font-size: 1.5rem;
+}
+
+/* Botones */
+.button.is-dark {
+    background-color: #111827;
+    color: #ffffff;
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.2s;
+    border: none;
+}
+.button.is-dark:hover {
+    background-color: #374151;
+    transform: translateY(-1px);
+}
+.button.is-success {
+    background-color: #059669;
+    color: #ffffff;
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.2s;
+    border: none;
+}
+.button.is-success:hover {
+    background-color: #047857;
+    transform: translateY(-1px);
+}

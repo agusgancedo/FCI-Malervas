@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.4/css/bulma.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="assets/style.css">
+    <title>Transacciones</title>
+    <link rel="icon" href="assets/iconDashboard.png" type="image/png">
+</head>
+<body>
+
+<nav class="navbar is-fixed-top">
+    <div class="container">
+        <div class="navbar-brand">
+            <a class="navbar-item" href="../dashboard/index.html">
+                <h1 class="title is-4">Malervas FCI</h1>
+            </a>
+        </div>
+        <div class="navbar-menu is-active" style="box-shadow: none; background: transparent;">
+            <div class="navbar-end">
+                <div class="navbar-item">
+                    <a class="button is-light is-rounded mr-2" href="../historial/index.html">
+                        <span class="icon"><i class="fas fa-history"></i></span>
+                        <span class="has-text-weight-semibold">Ver Historial</span>
+                    </a>
+                    <a class="button is-light is-rounded" href="../dashboard/index.html">
+                        <span class="icon"><i class="fas fa-arrow-left"></i></span>
+                        <span class="has-text-weight-semibold">Volver al Dashboard</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<div class="container" style="margin-top: 6rem; padding: 0 1rem; padding-bottom: 3rem;">
+    <div class="columns is-centered is-variable is-6">
+
+        <div class="column is-5">
+            <div class="box">
+                <div class="has-text-centered mb-5">
+                    <div class="icon-container mb-3" style="background-color: #f3f4f6; color: #4b5563;">
+                        <i class="fas fa-exchange-alt"></i>
+                    </div>
+                    <h2 class="title is-4 mb-2" style="color: #111827;">Operaciones</h2>
+                    <p class="subtitle is-6 has-text-grey">Registrá ingresos o retiros del fondo.</p>
+                </div>
+
+                <form id="form_tx">
+                    <div class="field">
+                        <label class="label">Socio</label>
+                        <div class="control has-icons-left">
+                            <div class="select is-fullwidth">
+                                <select id="select_socio" required>
+                                    <option value="" disabled selected>Cargando socios...</option>
+                                </select>
+                            </div>
+                            <div class="icon is-small is-left" style="color: #6b7280;">
+                                <i class="fas fa-user"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label class="label">Tipo de Operación</label>
+                        <div class="control">
+                            <div class="select is-fullwidth">
+                                <select id="tipo_tx" required>
+                                    <option value="APORTE">Aporte (Ingreso)</option>
+                                    <option value="RETIRO">Retiro (Egreso)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label class="label">Monto ($)</label>
+                        <div class="control has-icons-left">
+                            <input class="input" type="number" id="monto_tx" placeholder="Ej: 50000" min="1" step="0.01" required>
+                            <div class="icon is-small is-left" style="color: #6b7280;">
+                                <i class="fas fa-dollar-sign"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="notification is-light is-hidden mt-4" id="msg_tx"></div>
+
+                    <div class="control mt-5">
+                        <button type="submit" class="button is-dark is-fullwidth">Guardar Transacción</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="column is-5">
+            <div class="box">
+                <div class="has-text-centered mb-5">
+                    <div class="icon-container mb-3" style="background-color: #ecfdf5; color: #059669;">
+                        <i class="fas fa-chart-pie"></i>
+                    </div>
+                    <h2 class="title is-4 mb-2" style="color: #111827;">Mercado</h2>
+                    <p class="subtitle is-6 has-text-grey">Ajustá el patrimonio total de las inversiones.</p>
+                </div>
+
+                <form id="form_mercado">
+                    <div class="field">
+                        <label class="label">Nuevo Patrimonio Total ($)</label>
+                        <div class="control has-icons-left">
+                            <input class="input" type="number" id="monto_mercado" placeholder="Dinero total actual" min="0" step="0.01" required>
+                            <div class="icon is-small is-left" style="color: #6b7280;">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="notification is-light is-hidden mt-4" id="msg_mercado"></div>
+
+                    <div class="control mt-5">
+                        <button type="submit" class="button is-success is-fullwidth">Actualizar Valor</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    const API_URL = "http://localhost:3030/api";
+
+    // Cargar Socios
+    async function cargarSocios() {
+        const select = document.getElementById("select_socio");
+        try {
+            const res = await fetch(`${API_URL}/socios`);
+            const socios = await res.json();
+
+            select.innerHTML = '<option value="" disabled selected>Seleccione un socio</option>';
+            socios.forEach(s => {
+                select.innerHTML += `<option value="${s.id}">${s.nombre} (@${s.usuario})</option>`;
+            });
+        } catch (error) {
+            console.error("Error al cargar socios:", error);
+            select.innerHTML = '<option value="" disabled selected>Error de conexión</option>';
+        }
+    }
+
+    // Manejador de notificaciones visuales
+    function mostrarMensaje(elementId, mensaje, esError) {
+        const msgBox = document.getElementById(elementId);
+        msgBox.textContent = (esError ? "❌ " : "✅ ") + mensaje;
+        msgBox.className = `notification is-light ${esError ? 'is-danger' : 'is-success'}`;
+        msgBox.classList.remove("is-hidden");
+
+        setTimeout(() => msgBox.classList.add("is-hidden"), 4000);
+    }
+
+    // Enviar Transacción (Aporte/Retiro)
+    document.getElementById("form_tx").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const id_socio = document.getElementById("select_socio").value;
+        const tipo = document.getElementById("tipo_tx").value;
+        const monto = parseFloat(document.getElementById("monto_tx").value);
+
+        try {
+            const res = await fetch(`${API_URL}/transacciones`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ id_socio, tipo, monto })
+            });
+            const data = await res.json();
+
+            if (data.status) {
+                mostrarMensaje("msg_tx", data.mensaje, false);
+                document.getElementById("monto_tx").value = "";
+            } else {
+                throw new Error(data.mensaje);
+            }
+        } catch (error) {
+            mostrarMensaje("msg_tx", error.message, true);
+        }
+    });
+
+    // Enviar Mercado
+    document.getElementById("form_mercado").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const nuevo_valor = parseFloat(document.getElementById("monto_mercado").value);
+
+        try {
+            const res = await fetch(`${API_URL}/mercado`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ nuevo_valor })
+            });
+            const data = await res.json();
+
+            if (data.status) {
+                mostrarMensaje("msg_mercado", data.mensaje, false);
+                document.getElementById("monto_mercado").value = "";
+            } else {
+                throw new Error(data.mensaje);
+            }
+        } catch (error) {
+            mostrarMensaje("msg_mercado", error.message, true);
+        }
+    });
+
+    cargarSocios();
+</script>
+</body>
+</html>

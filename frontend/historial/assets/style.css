@@ -1,0 +1,245 @@
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #e8ecea;
+
+    background-image:
+            radial-gradient(circle at 85% 0%, rgba(5, 150, 105, 0.12) 0%, transparent 40%), /* Verde financiero arriba a la derecha */
+            radial-gradient(circle at 10% 10%, rgba(59, 130, 246, 0.06) 0%, transparent 40%), /* Azul corporativo arriba a la izq */
+            radial-gradient(circle at 50% 100%, rgba(139, 92, 246, 0.04) 0%, transparent 50%); /* Violeta muy tenue abajo */
+
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    background-size: cover;
+
+    color: #111827;
+    min-height: 100vh;
+}
+
+/* Navbar */
+.navbar {
+    background-color: rgba(255, 255, 255, 0.95) !important;
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid #e5e7eb;
+}
+
+/* Estilos y transición suave para el Logo/Título */
+.navbar-brand .title {
+    color: #111827 !important;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    transition: all 0.2s ease-in-out; /* Prepara el elemento para animarse */
+}
+
+/* Efecto Hover para "Malervas FCI" */
+.navbar-brand .navbar-item:hover .title {
+    color: #059669 !important; /* Se pinta del verde financiero de la página */
+    transform: scale(1.03); /* Se agranda un 3% para dar efecto de "cliqueable" */
+}
+
+/* Sacamos el fondo gris que pone Bulma por defecto al pasar el mouse por los items del navbar */
+.navbar-brand .navbar-item:hover {
+    background-color: transparent !important;
+}
+
+/* Layout principal */
+.main-container {
+    margin-top: 6rem;
+    padding: 0 1rem;
+    padding-bottom: 3rem;
+}
+
+/* Tarjeta (Box) */
+.box {
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    border: 1px solid #e5e7eb;
+    padding: 1.5rem 2rem;
+}
+
+/* Título de la sección */
+.historial-title-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+.historial-icon {
+    color: #4b5563;
+}
+.historial-title {
+    color: #111827;
+    margin-bottom: 0;
+    font-weight: 600;
+}
+
+/* Tabla base */
+.table {
+    background-color: transparent;
+}
+.table thead th {
+    color: #4b5563 !important;
+    font-weight: 600 !important;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+    border-bottom: 2px solid #e5e7eb;
+}
+.table td {
+    vertical-align: middle;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.table.is-hoverable tbody tr:hover {
+    background-color: #f9fafb !important; /* Gris ultra clarito */
+    transition: background-color 0.2s ease-in-out;
+}
+
+/* Opcional: Si querés que el texto se oscurezca un poco más al pasar el mouse */
+.table.is-hoverable tbody tr:hover td {
+    color: #000000;
+}
+
+/* Celdas específicas (reemplazan los estilos en línea) */
+.table td.td-fecha {
+    color: #6b7280;
+    font-size: 0.875rem;
+}
+
+.table td.td-socio,
+.table td.td-monto {
+    color: #111827;
+    font-weight: 700;
+}
+
+.table td.td-cuotas {
+    color: #4b5563;
+    font-weight: 500;
+}
+
+.table td.td-precio {
+    color: #6b7280;
+    font-weight: 500;
+}
+
+/* Botones */
+.button.is-dark {
+    background-color: #111827;
+    color: #ffffff;
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.2s;
+    border: none;
+}
+.button.is-dark:hover {
+    background-color: #374151;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+.button.is-outlined {
+    background-color: transparent !important;
+    border: 1px solid #111827 !important;
+    color: #111827 !important;
+}
+.button.is-outlined:hover {
+    background-color: #111827 !important;
+    color: #ffffff !important;
+}
+
+/* =========================================
+   Estilos del Header y Botón de Reset
+   ========================================= */
+.historial-header-wrapper {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    align-items: center;
+}
+.historial-title-left {
+    display: flex;
+    align-items: center;
+}
+.btn-reset-fondo {
+    border-radius: 6px !important;
+}
+
+/* =========================================
+   Estilos del Modal de Confirmación
+   ========================================= */
+
+.modal-content-custom {
+    max-width: 400px;
+}
+.modal-box-custom {
+    border: none;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    border-radius: 12px;
+}
+.modal-alert-icon {
+    color: #ef4444;
+    background-color: #fef2f2;
+    border-radius: 50%;
+    height: 4rem;
+    width: 4rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+.modal-title-custom {
+    color: #111827;
+    font-weight: 700;
+}
+.modal-text-custom {
+    color: #4b5563; !important;
+    font-size: 0.95rem;
+}
+.btn-modal {
+    border-radius: 8px !important;
+    font-weight: 500 !important;
+}
+.btn-modal-confirm {
+    background-color: #ef4444 !important;
+    border-color: #ef4444 !important;
+    color: #ffffff !important;
+}
+.btn-modal-confirm:hover {
+    background-color: #dc2626 !important;
+    border-color: #dc2626 !important;
+}
+
+/* =========================================
+   Estilos del Toast (Notificación Flotante)
+   ========================================= */
+.toast-custom {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    display: flex;
+    align-items: center;
+    z-index: 9999;
+    transition: all 0.3s ease-in-out;
+    /* Estado visible */
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.toast-custom.is-hidden {
+    /* Estado oculto */
+    opacity: 0;
+    transform: translateY(20px);
+    pointer-events: none;
+}
+
+.toast-success {
+    background-color: #ecfdf5;
+    color: #065f46;
+    border: 1px solid #a7f3d0;
+}
+
+.toast-error {
+    background-color: #fef2f2;
+    color: #991b1b;
+    border: 1px solid #fecaca;
+}

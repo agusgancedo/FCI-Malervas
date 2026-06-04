@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.4/css/bulma.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <link rel="stylesheet" href="assets/style.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <title>Dashboard</title>
+    <link rel="icon" href="assets/iconDashboard.png" type="image/png">
+
+</head>
+<body>
+
+<nav class="navbar is-fixed-top">
+    <div class="container">
+        <div class="navbar-brand">
+            <a class="navbar-item" href="#">
+                <h1 class="title is-4">Malervas FCI</h1>
+            </a>
+        </div>
+        <div class="navbar-menu is-active" style="box-shadow: none; background: transparent;">
+            <div class="navbar-end">
+                <div class="navbar-item">
+                    <a class="button is-dark is-outlined mr-2" href="../socios/index.html" style="background-color: transparent; border: 1px solid #111827; color: #111827;">
+                        <span class="icon"><i class="fas fa-users"></i></span>
+                        <span>Miembros</span>
+                    </a>
+                    <a class="button is-dark is-outlined mr-2" href="../historial/index.html" style="background-color: transparent; border: 1px solid #111827; color: #111827;">
+                        <span class="icon"><i class="fas fa-history"></i></span>
+                        <span>Historial</span>
+                    </a>
+                    <a class="button is-dark" href="../transacciones/index.html">
+                        <span class="icon"><i class="fas fa-plus"></i></span>
+                        <span>Nuevo Movimiento</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<div class="container" style="margin-top: 6rem; padding: 0 1rem; padding-bottom: 3rem;">
+
+    <div class="columns is-variable is-4">
+        <div class="column is-6">
+            <div class="box">
+                <p class="metric-label">
+                    <span class="icon is-small mr-2" style="color: #6b7280;"><i class="fas fa-wallet"></i></span>
+                    Patrimonio Total
+                </p>
+                <h2 class="metric-value" id="val_fondo">--</h2>
+            </div>
+        </div>
+        <div class="column is-6">
+            <div class="box">
+                <p class="metric-label">
+                    <span class="icon is-small mr-2" style="color: #059669;"><i class="fas fa-chart-line"></i></span>
+                    Valor de Cuotaparte
+                </p>
+                <h2 class="metric-value" style="color: #059669;" id="val_cuota">--</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="columns is-variable is-4 mt-2">
+
+        <div class="column is-4">
+            <div class="box has-text-centered">
+                <p class="metric-label mb-5">Distribución del fondo</p>
+                <div style="position: relative; height: 260px; width: 100%; display: flex; justify-content: center;">
+                    <canvas id="graficoSocios"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="column is-8">
+            <div class="box">
+                <p class="metric-label mb-4">Estado de c/miembro</p>
+                <div class="table-container">
+                    <table class="table is-fullwidth is-hoverable">
+                        <thead>
+                        <tr>
+                            <th>nombre</th>
+                            <th>Cuotapartes</th>
+                            <th>Valor Actual</th>
+                            <th>% Participación</th>
+                        </tr>
+                        </thead>
+                        <tbody id="tabla_socios">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    const valFondo = document.getElementById("val_fondo");
+    const valCuota = document.getElementById("val_cuota");
+    const tablaSocios = document.getElementById("tabla_socios");
+
+    let graficoInstancia = null;
+
+    async function cargarDashboard() {
+        try {
+            const res = await fetch("http://localhost:3030/api/estado");
+            const data = await res.json();
+
+            // Pintar métricas globales
+            valFondo.innerHTML = `$${parseFloat(data.valor_total).toLocaleString('es-AR', {minimumFractionDigits: 2})}`;
+            valCuota.innerHTML = `$${parseFloat(data.precio_cuota).toLocaleString('es-AR', {minimumFractionDigits: 2})}`;
+
+            const nombresGrafico = [];
+            const porcentajesGrafico = [];
+
+            // Pintar tabla
+            tablaSocios.innerHTML = "";
+            data.socios.forEach(s => {
+                const cuotas = parseFloat(s.cuotas_poseidas);
+                const valorActual = cuotas * data.precio_cuota;
+                const porcentaje = data.total_cuotas > 0 ? (cuotas / data.total_cuotas) * 100 : 0;
+
+                nombresGrafico.push(s.nombre);
+                porcentajesGrafico.push(porcentaje.toFixed(2));
+
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                        <td class="has-text-weight-bold" style="color: #111827;">
+                            <i class="fas fa-user-circle mr-2" style="color: #9ca3af;"></i>${s.nombre}
+                        </td>
+                        <td style="color: #4b5563;">${cuotas.toFixed(2)}</td>
+                        <td class="has-text-weight-bold" style="color: #059669;">$${valorActual.toLocaleString('es-AR', {minimumFractionDigits: 2})}</td>
+                        <td>
+                            <span class="tag is-rounded has-text-weight-bold" style="background-color: #f3f4f6; color: #111827;">${porcentaje.toFixed(1)}%</span>
+                        </td>
+                    `;
+                tablaSocios.appendChild(tr);
+            });
+
+            // Renderizar Gráfico
+            renderizarGrafico(nombresGrafico, porcentajesGrafico);
+
+        } catch (error) {
+            console.error("Error al cargar datos:", error);
+            valFondo.innerHTML = "Error de conexión";
+        }
+    }
+
+    function renderizarGrafico(etiquetas, datos) {
+        const ctx = document.getElementById('graficoSocios').getContext('2d');
+
+        if (graficoInstancia) {
+            graficoInstancia.destroy();
+        }
+
+        // Colores profesionales de alto contraste
+        const colores = ['#111827', '#059669', '#3b82f6', '#8b5cf6', '#f59e0b', '#ef4444'];
+
+        graficoInstancia = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: etiquetas,
+                datasets: [{
+                    data: datos,
+                    backgroundColor: colores,
+                    borderWidth: 2,
+                    borderColor: '#ffffff',
+                    hoverOffset: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '75%',
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            font: {
+                                family: "'Inter', sans-serif",
+                                size: 13,
+                                weight: '500'
+                            },
+                            color: '#4b5563',
+                            usePointStyle: true,
+                            padding: 20
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    cargarDashboard();
+</script>
+</body>
+</html>
