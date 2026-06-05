@@ -51,11 +51,11 @@
 
                 <form id="form_tx">
                     <div class="field">
-                        <label class="label">Socio</label>
+                        <label class="label">Miembro</label>
                         <div class="control has-icons-left">
                             <div class="select is-fullwidth">
                                 <select id="select_socio" required>
-                                    <option value="" disabled selected>Cargando socios...</option>
+                                    <option value="" disabled selected>Cargando miembros...</option>
                                 </select>
                             </div>
                             <div class="icon is-small is-left" style="color: #6b7280;">
@@ -79,7 +79,7 @@
                     <div class="field mb-5">
                         <!-- Contenedor Flex para alinear el Label y el botón MAX -->
                         <div class="is-flex is-justify-content-space-between is-align-items-flex-end mb-1">
-                            <label class="label label-custom mb-0">Monto a operar</label>
+                            <label class="label label-custom mb-0">Monto</label>
                             <!-- El botón empieza oculto (display: none) y lo mostramos con JS solo si es un retiro -->
                             <button type="button" id="btn_retirar_todo" class="button is-small is-ghost px-0" style="color: #059669; font-weight: 700; height: auto; text-decoration: none; display: none;">
                                 Retirar máximo
@@ -146,7 +146,7 @@
             const res = await fetch(`${API_URL}/socios`);
             const socios = await res.json();
 
-            select.innerHTML = '<option value="" disabled selected>Seleccione un socio</option>';
+            select.innerHTML = '<option value="" disabled selected>Seleccionar miembro</option>';
             socios.forEach(s => {
                 select.innerHTML += `<option value="${s.id}">${s.nombre} (@${s.usuario})</option>`;
             });

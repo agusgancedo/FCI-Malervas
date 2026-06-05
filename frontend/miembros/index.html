@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.4/css/bulma.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <link rel="stylesheet" href="assets/style.css">
-    <title>Gestión de Socios | Malervas FCI</title>
+    <title>Gestión de Miembros</title>
 </head>
 <body>
 
@@ -39,22 +39,22 @@
             <div class="box">
                 <div class="section-header">
                     <span class="icon is-medium mr-3 header-icon"><i class="fas fa-user-plus fa-lg"></i></span>
-                    <h2 class="title is-4 header-title">Nuevo Socio</h2>
+                    <h2 class="title is-4 header-title">Nuevo miembro</h2>
                 </div>
 
                 <form id="form_socio">
                     <div class="field mb-4">
-                        <label class="label label-custom">Nombre (Apodo)</label>
+                        <label class="label label-custom">Nombre</label>
                         <div class="control has-icons-left">
-                            <input class="input is-medium" type="text" id="nombre_socio" placeholder="Ej: Agus" required>
+                            <input class="input is-medium" type="text" id="nombre_socio" placeholder="nombre" required>
                             <span class="icon is-small is-left input-icon"><i class="fas fa-font"></i></span>
                         </div>
                     </div>
 
                     <div class="field mb-5">
-                        <label class="label label-custom">Usuario (Para el sistema)</label>
+                        <label class="label label-custom">Usuario (Para la BDD)</label>
                         <div class="control has-icons-left">
-                            <input class="input is-medium" type="text" id="usuario_socio" placeholder="Ej: agusgancedo" required>
+                            <input class="input is-medium" type="text" id="usuario_socio" placeholder="usuario" required>
                             <span class="icon is-small is-left input-icon"><i class="fas fa-at"></i></span>
                         </div>
                     </div>
@@ -73,7 +73,7 @@
             <div class="box">
                 <div class="section-header">
                     <span class="icon is-medium mr-3 header-icon"><i class="fas fa-users fa-lg"></i></span>
-                    <h2 class="title is-4 header-title">Socios Activos</h2>
+                    <h2 class="title is-4 header-title">Miembros Activos</h2>
                 </div>
 
                 <div class="table-container">
@@ -105,13 +105,13 @@
                         <i class="fas fa-user-times fa-2x"></i>
                     </span>
             </div>
-            <h3 class="title is-4 has-text-centered modal-title-custom">¿Eliminar socio?</h3>
+            <h3 class="title is-4 has-text-centered modal-title-custom">¿Eliminar miembro?</h3>
             <p class="has-text-centered mb-5 modal-text-custom" id="texto_modal_socio">
                 <!-- El texto cambia dinámicamente con JS -->
             </p>
             <div class="buttons is-centered mt-5">
                 <button id="btn_cancelar_modal" class="button is-light btn-modal">Cancelar</button>
-                <button id="btn_confirmar_modal" class="button is-danger btn-modal btn-modal-confirm">Sí, eliminar</button>
+                <button id="btn_confirmar_modal" class="button is-danger btn-modal btn-modal-confirm">Eliminar</button>
             </div>
         </div>
     </div>
@@ -222,7 +222,7 @@
     function eliminarSocio(id, nombre) {
         socioAEliminar = { id, nombre };
         // Personalizamos el texto de la tarjeta
-        textoModalSocio.innerHTML = `¿Estás seguro de que querés eliminar a ${nombre} del fondo?<br><br>Si todavía tiene dinero invertido, el sistema bloqueará esta acción por seguridad.`;
+        textoModalSocio.innerHTML = `¿Estás seguro de que querés eliminar a ${nombre} del fondo?<br><br>Solo puede ser eliminado si ya retiro toda su plata.`;
         // Abrimos la tarjeta
         modalBorrar.classList.add("is-active");
     }
