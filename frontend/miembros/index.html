@@ -95,7 +95,27 @@
 
     </div>
 </div>
-
+<!-- Modal de Confirmación Estético (Borrar Socio) -->
+<div id="modal_borrar_socio" class="modal">
+    <div class="modal-background modal-blur-bg"></div>
+    <div class="modal-content modal-content-custom">
+        <div class="box modal-box-custom">
+            <div class="has-text-centered mb-4 mt-2">
+                    <span class="icon is-large modal-alert-icon">
+                        <i class="fas fa-user-times fa-2x"></i>
+                    </span>
+            </div>
+            <h3 class="title is-4 has-text-centered modal-title-custom">¿Eliminar socio?</h3>
+            <p class="has-text-centered mb-5 modal-text-custom" id="texto_modal_socio">
+                <!-- El texto cambia dinámicamente con JS -->
+            </p>
+            <div class="buttons is-centered mt-5">
+                <button id="btn_cancelar_modal" class="button is-light btn-modal">Cancelar</button>
+                <button id="btn_confirmar_modal" class="button is-danger btn-modal btn-modal-confirm">Sí, eliminar</button>
+            </div>
+        </div>
+    </div>
+</div>
 <div id="toast_notificacion" class="toast-custom is-hidden">
     <span class="icon mr-2" id="toast_icon"></span>
     <span id="toast_msg" style="font-weight: 500;"></span>
@@ -180,23 +200,60 @@
         }
     });
 
-    async function eliminarSocio(id, nombre) {
-        if(!confirm(`¿Estás seguro de que querés eliminar a ${nombre} del fondo?`)) return;
+    // ==========================================
+    // LÓGICA DEL MODAL DE ELIMINAR SOCIO
+    // ==========================================
+    let socioAEliminar = null; // Variable para recordar a quién tocamos
+
+    const modalBorrar = document.getElementById("modal_borrar_socio");
+    const btnCancelarModal = document.getElementById("btn_cancelar_modal");
+    const btnConfirmarModal = document.getElementById("btn_confirmar_modal");
+    const textoModalSocio = document.getElementById("texto_modal_socio");
+
+    const cerrarModal = () => {
+        modalBorrar.classList.remove("is-active");
+        socioAEliminar = null; // Limpiamos la memoria
+    };
+
+    btnCancelarModal.addEventListener("click", cerrarModal);
+    modalBorrar.querySelector('.modal-background').addEventListener("click", cerrarModal);
+
+    // 1. Esta función se ejecuta al tocar el tachito rojo en la tabla
+    function eliminarSocio(id, nombre) {
+        socioAEliminar = { id, nombre };
+        // Personalizamos el texto de la tarjeta
+        textoModalSocio.innerHTML = `¿Estás seguro de que querés eliminar a ${nombre} del fondo?<br><br>Si todavía tiene dinero invertido, el sistema bloqueará esta acción por seguridad.`;
+        // Abrimos la tarjeta
+        modalBorrar.classList.add("is-active");
+    }
+
+    // 2. Esta función se ejecuta al tocar "Sí, eliminar" dentro de la tarjeta
+    btnConfirmarModal.addEventListener("click", async () => {
+        if (!socioAEliminar) return;
+
+        // Ponemos el botón a cargar
+        btnConfirmarModal.classList.add("is-loading");
 
         try {
-            const res = await fetch(`${API_URL}/socios/${id}`, { method: "DELETE" });
+            const res = await fetch(`${API_URL}/socios/${socioAEliminar.id}`, { method: "DELETE" });
             const data = await res.json();
 
             if (data.status) {
                 mostrarToast(data.mensaje, false);
-                cargarSocios();
+                cargarSocios(); // Recargamos la tabla
+                cerrarModal(); // Cerramos la tarjeta
             } else {
                 mostrarToast(data.mensaje, true);
+                cerrarModal(); // Cerramos la tarjeta aunque haya error (ej: tiene plata)
             }
         } catch (error) {
             mostrarToast("Error de conexión.", true);
+            cerrarModal();
+        } finally {
+            // Sacamos el estado de carga
+            btnConfirmarModal.classList.remove("is-loading");
         }
-    }
+    });
 
     cargarSocios();
 </script>

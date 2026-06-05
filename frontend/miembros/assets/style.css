@@ -73,7 +73,7 @@ body {
     text-transform: uppercase;
     font-size: 0.75rem;
     letter-spacing: 0.05em;
-    border-bottom: 2px solid #e5e7eb;
+    border-bottom: 2px solid #c6c7ca;
 }
 
 /* Celdas para ganarle a Bulma */
@@ -81,6 +81,7 @@ body {
 .table td.td-nombre { color: #111827; font-weight: 700; vertical-align: middle; }
 .table td.td-usuario { color: #4b5563; font-weight: 500; vertical-align: middle; }
 .table td.td-accion { vertical-align: middle; }
+.table td { border-bottom: 1px solid #c6c7ca; }
 
 /* Icono del usuario en la tabla */
 .socio-avatar-icon { color: #9ca3af; }
@@ -113,6 +114,10 @@ body {
     box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.02);
     font-weight: 500;
     transition: all 0.2s ease;
+}
+
+.input::placeholder {
+    color: #bcbfc3;
 }
 
 .input:hover {
@@ -157,3 +162,46 @@ body {
 .toast-custom.is-hidden { opacity: 0; transform: translateY(20px); pointer-events: none; }
 .toast-success { background-color: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; }
 .toast-error { background-color: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
+
+/* =========================================
+   Estilos del Modal de Confirmación
+   ========================================= */
+.modal-content-custom {
+    max-width: 400px;
+}
+.modal-box-custom {
+    border: none;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    border-radius: 12px;
+}
+.modal-alert-icon {
+    color: #ef4444;
+    background-color: #fef2f2;
+    border-radius: 50%;
+    height: 4rem;
+    width: 4rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+.modal-title-custom {
+    color: #111827;
+    font-weight: 700;
+}
+.modal-text-custom {
+    color: #4b5563;
+    font-size: 0.95rem;
+}
+.btn-modal {
+    border-radius: 8px !important;
+    font-weight: 500 !important;
+}
+.btn-modal-confirm {
+    background-color: #ef4444 !important;
+    border-color: #ef4444 !important;
+    color: #ffffff !important;
+}
+.btn-modal-confirm:hover {
+    background-color: #dc2626 !important;
+    border-color: #dc2626 !important;
+}

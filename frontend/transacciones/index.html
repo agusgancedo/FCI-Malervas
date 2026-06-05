@@ -76,13 +76,19 @@
                         </div>
                     </div>
 
-                    <div class="field">
-                        <label class="label">Monto ($)</label>
+                    <div class="field mb-5">
+                        <!-- Contenedor Flex para alinear el Label y el botón MAX -->
+                        <div class="is-flex is-justify-content-space-between is-align-items-flex-end mb-1">
+                            <label class="label label-custom mb-0">Monto a operar</label>
+                            <!-- El botón empieza oculto (display: none) y lo mostramos con JS solo si es un retiro -->
+                            <button type="button" id="btn_retirar_todo" class="button is-small is-ghost px-0" style="color: #059669; font-weight: 700; height: auto; text-decoration: none; display: none;">
+                                Retirar máximo
+                            </button>
+                        </div>
+
                         <div class="control has-icons-left">
-                            <input class="input" type="number" id="monto_tx" placeholder="Ej: 50000" min="1" step="0.01" required>
-                            <div class="icon is-small is-left" style="color: #6b7280;">
-                                <i class="fas fa-dollar-sign"></i>
-                            </div>
+                            <input class="input is-medium" type="number" id="monto_fiat" placeholder="Ej: 50000" step="0.01" min="1" required>
+                            <span class="icon is-small is-left input-icon"><i class="fas fa-dollar-sign"></i></span>
                         </div>
                     </div>
 
@@ -131,7 +137,9 @@
 <script>
     const API_URL = "http://localhost:3030/api";
 
-    // Cargar Socios
+    // ==========================================
+    // 1. CARGA INICIAL
+    // ==========================================
     async function cargarSocios() {
         const select = document.getElementById("select_socio");
         try {
@@ -148,7 +156,9 @@
         }
     }
 
-    // Manejador de notificaciones visuales
+    // ==========================================
+    // 2. SISTEMA DE NOTIFICACIONES
+    // ==========================================
     function mostrarMensaje(elementId, mensaje, esError) {
         const msgBox = document.getElementById(elementId);
         msgBox.textContent = (esError ? "❌ " : "✅ ") + mensaje;
@@ -158,12 +168,71 @@
         setTimeout(() => msgBox.classList.add("is-hidden"), 4000);
     }
 
-    // Enviar Transacción (Aporte/Retiro)
+    // ==========================================
+    // 3. LÓGICA DEL BOTÓN "RETIRAR MÁXIMO"
+    // ==========================================
+    // IDs corregidos para que coincidan con tu HTML
+    const selectTipo = document.getElementById("tipo_tx");
+    const selectSocio = document.getElementById("select_socio");
+    const inputMonto = document.getElementById("monto_fiat");
+    const btnRetirarTodo = document.getElementById("btn_retirar_todo");
+
+    // Mostrar/Ocultar el botón dependiendo de si es Aporte o Retiro
+    selectTipo.addEventListener("change", () => {
+        if (selectTipo.value === "RETIRO") {
+            btnRetirarTodo.style.display = "block";
+        } else {
+            btnRetirarTodo.style.display = "none";
+            inputMonto.value = "";
+        }
+    });
+
+    // Lógica al hacer clic en "Retirar máximo"
+    // Lógica al hacer clic en "Retirar máximo"
+    btnRetirarTodo.addEventListener("click", async () => {
+        const socioId = selectSocio.value;
+
+        if (!socioId) {
+            mostrarMensaje("msg_tx", "Primero seleccioná un socio.", true);
+            return;
+        }
+
+        try {
+            const res = await fetch(`${API_URL}/estado`);
+            const estado = await res.json();
+
+            // Buscamos al socio en el estado actual
+            const socio = estado.socios.find(s => s.id == socioId);
+
+            // Verificamos si existe en el fondo Y si tiene cuotas mayores a 0
+            if (socio && parseFloat(socio.cuotas_poseidas) > 0) {
+                const cuotas = parseFloat(socio.cuotas_poseidas);
+                const precio = parseFloat(estado.precio_cuota);
+                const saldoReal = cuotas * precio;
+
+                inputMonto.value = saldoReal.toFixed(2);
+            } else {
+                // Si no existe en la lista del estado, o sus cuotas son 0, lanzamos el mensaje
+                mostrarMensaje("msg_tx", "El socio no tiene fondos para retirar.", true);
+                inputMonto.value = ""; // Vaciamos el input por las dudas
+            }
+        } catch (error) {
+            console.error(error);
+            mostrarMensaje("msg_tx", "Error al obtener los saldos del servidor.", true);
+        } finally {
+            btnRetirarTodo.textContent = "Retirar máximo";
+        }
+    });
+
+    // ==========================================
+    // 4. GUARDAR TRANSACCIÓN (Submit Formulario)
+    // ==========================================
     document.getElementById("form_tx").addEventListener("submit", async (e) => {
         e.preventDefault();
         const id_socio = document.getElementById("select_socio").value;
         const tipo = document.getElementById("tipo_tx").value;
-        const monto = parseFloat(document.getElementById("monto_tx").value);
+        // Bug corregido: antes decía "monto_tx", ahora dice "monto_fiat"
+        const monto = parseFloat(document.getElementById("monto_fiat").value);
 
         try {
             const res = await fetch(`${API_URL}/transacciones`, {
@@ -175,7 +244,7 @@
 
             if (data.status) {
                 mostrarMensaje("msg_tx", data.mensaje, false);
-                document.getElementById("monto_tx").value = "";
+                document.getElementById("monto_fiat").value = "";
             } else {
                 throw new Error(data.mensaje);
             }
@@ -184,7 +253,9 @@
         }
     });
 
-    // Enviar Mercado
+    // ==========================================
+    // 5. GUARDAR VALOR DE MERCADO
+    // ==========================================
     document.getElementById("form_mercado").addEventListener("submit", async (e) => {
         e.preventDefault();
         const nuevo_valor = parseFloat(document.getElementById("monto_mercado").value);
@@ -208,6 +279,7 @@
         }
     });
 
+    // Inicializar página
     cargarSocios();
 </script>
 </body>
