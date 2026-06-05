@@ -1,0 +1,207 @@
+/* =========================================
+   Fondo Premium Estilo "Aurora"
+   ========================================= */
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #f8fafc;
+    background-image:
+            radial-gradient(circle at 85% 0%, rgba(5, 150, 105, 0.12) 0%, transparent 40%),
+            radial-gradient(circle at 10% 10%, rgba(59, 130, 246, 0.06) 0%, transparent 40%),
+            radial-gradient(circle at 50% 100%, rgba(139, 92, 246, 0.04) 0%, transparent 50%);
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    background-size: cover;
+    color: #111827;
+    min-height: 100vh;
+}
+
+/* =========================================
+   Menú de Navegación (Navbar)
+   ========================================= */
+.navbar {
+    background-color: rgba(255, 255, 255, 0.95) !important;
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid #e5e7eb;
+}
+.navbar-brand .title {
+    color: #111827 !important;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    transition: all 0.2s ease-in-out;
+}
+.navbar-brand .navbar-item:hover .title {
+    color: #059669 !important;
+    transform: scale(1.03);
+}
+.navbar-brand .navbar-item:hover {
+    background-color: transparent !important;
+}
+
+/* =========================================
+   Tarjetas (Boxes) y Títulos
+   ========================================= */
+.box {
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    border: 1px solid #e5e7eb;
+    padding: 2rem;
+    height: 100%;
+}
+.section-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+.header-icon {
+    color: #4b5563;
+}
+.header-title {
+    color: #111827;
+    margin-bottom: 0;
+    font-weight: 600;
+}
+
+/* =========================================
+   Tabla de Socios (Alta Especificidad)
+   ========================================= */
+.table { background-color: transparent; }
+
+.table thead th {
+    color: #4b5563 !important;
+    font-weight: 600 !important;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+    border-bottom: 2px solid #c6c7ca;
+}
+
+/* Celdas para ganarle a Bulma */
+.table td.td-id { color: #6b7280; font-size: 0.875rem; vertical-align: middle; }
+.table td.td-nombre { color: #111827; font-weight: 700; vertical-align: middle; }
+.table td.td-usuario { color: #4b5563; font-weight: 500; vertical-align: middle; }
+.table td.td-accion { vertical-align: middle; }
+.table td { border-bottom: 1px solid #c6c7ca; }
+
+/* Icono del usuario en la tabla */
+.socio-avatar-icon { color: #9ca3af; }
+
+/* Hover de filas */
+.table.is-hoverable tbody tr:hover {
+    background-color: #f9fafb !important;
+    transition: background-color 0.2s ease-in-out;
+}
+
+/* =========================================
+   Formularios y Botones (Estilo Transacciones)
+   ========================================= */
+.label-custom {
+    color: #374151;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.input-icon {
+    color: #9ca3af !important;
+}
+
+/* Campos de texto estilo Fintech */
+.input {
+    border-radius: 10px;
+    border: 1px solid #e5e7eb;
+    background-color: #f9fafb; /* Fondo gris ultra claro */
+    color: #111827 !important;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.02);
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.input::placeholder {
+    color: #bcbfc3;
+}
+
+.input:hover {
+    border-color: #d1d5db;
+}
+
+.input:focus {
+    background-color: #ffffff; /* Se ilumina a blanco al escribir */
+    border-color: #059669; /* Borde verde financiero */
+    box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.15) !important; /* Resplandor verde suave */
+}
+
+/* Botón principal robusto */
+.button.is-dark {
+    background-color: #111827;
+    color: #ffffff;
+    border-radius: 10px;
+    font-weight: 600;
+    transition: all 0.2s;
+    border: none;
+}
+
+.button.is-dark:hover {
+    background-color: #374151;
+    transform: translateY(-2px); /* Se levanta un poquito al pasar el mouse */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.button.is-danger.is-light {
+    border-radius: 6px;
+}
+
+/* =========================================
+   Toasts
+   ========================================= */
+.toast-custom {
+    position: fixed; bottom: 2rem; right: 2rem; padding: 1rem 1.5rem;
+    border-radius: 8px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+    display: flex; align-items: center; z-index: 9999;
+    transition: all 0.3s ease-in-out; opacity: 1; transform: translateY(0);
+}
+.toast-custom.is-hidden { opacity: 0; transform: translateY(20px); pointer-events: none; }
+.toast-success { background-color: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; }
+.toast-error { background-color: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
+
+/* =========================================
+   Estilos del Modal de Confirmación
+   ========================================= */
+.modal-content-custom {
+    max-width: 400px;
+}
+.modal-box-custom {
+    border: none;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    border-radius: 12px;
+}
+.modal-alert-icon {
+    color: #ef4444;
+    background-color: #fef2f2;
+    border-radius: 50%;
+    height: 4rem;
+    width: 4rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+.modal-title-custom {
+    color: #111827;
+    font-weight: 700;
+}
+.modal-text-custom {
+    color: #4b5563;
+    font-size: 0.95rem;
+}
+.btn-modal {
+    border-radius: 8px !important;
+    font-weight: 500 !important;
+}
+.btn-modal-confirm {
+    background-color: #ef4444 !important;
+    border-color: #ef4444 !important;
+    color: #ffffff !important;
+}
+.btn-modal-confirm:hover {
+    background-color: #dc2626 !important;
+    border-color: #dc2626 !important;
+}

@@ -10,7 +10,16 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '../../frontend')));
 
-const { getSocios, getEstadoGlobal, registrarTransaccion, actualizarValorMercado, getHistorialTransacciones, limpiarHistorial } = require("./scripts/connectidb.js");
+const {
+    getSocios,
+    getEstadoGlobal,
+    registrarTransaccion,
+    actualizarValorMercado,
+    getHistorialTransacciones,
+    limpiarHistorial,
+    agregarSocio,
+    eliminarSocio
+} = require("./scripts/connectidb.js");
 
 // Endpoint: Obtener todos los balances y métricas (Para el Dashboard)
 app.get("/api/estado", async (req, res) => {
@@ -71,6 +80,25 @@ app.delete("/api/transacciones", async (req, res) => {
     if (!resultado.status) {
         return res.status(500).json(resultado);
     }
+    res.status(200).json(resultado);
+});
+
+// Endpoint: Crear un nuevo socio
+app.post("/api/socios", async (req, res) => {
+    const { nombre, usuario } = req.body;
+    if (!nombre || !usuario) {
+        return res.status(400).json({ status: false, mensaje: "Faltan datos obligatorios." });
+    }
+    const resultado = await agregarSocio(nombre, usuario);
+    if (!resultado.status) return res.status(400).json(resultado);
+    res.status(201).json(resultado);
+});
+
+// Endpoint: Eliminar un socio
+app.delete("/api/socios/:id", async (req, res) => {
+    const id = req.params.id;
+    const resultado = await eliminarSocio(id);
+    if (!resultado.status) return res.status(400).json(resultado);
     res.status(200).json(resultado);
 });
 
